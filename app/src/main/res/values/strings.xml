@@ -1,0 +1,36 @@
+<resources>
+    <string name="app_name">Serayu Larangan App</string>
+    <string name="title_home">Beranda</string>
+    <string name="title_maps">Map</string>
+    <string name="title_scan">Scan</string>
+    <string name="title_profile">Profil</string>
+    <string name="tour_title">Tour Title</string>
+
+    <string name="login_sub_title">
+        <font color="#43B97F"><b>Masuk</b></font>
+        jika anda sudah punya akun.
+    </string>
+    <string name="regis_sub_title">
+        <font color="#43B97F"><b>Daftar</b></font>
+        untuk memulai aplikasi.
+    </string>
+    <string name="reset_sub_title">
+        <font color="#43B97F"><b>Reset password</b></font>
+        jika anda lupa.
+    </string>
+    <string name="login_havent_account">
+        Anda belum punya akun ?
+        <font color="#43B97F"><b> Daftar akun</b></font>
+    </string>
+    <string name="regis_havent_account">
+        Sudah punya akun ?
+        <font color="#43B97F"><b> Masuk akun</b></font>
+    </string>
+    <string name="reset_havent_account">
+        Kembali ke
+        <font color="#43B97F"><b> Masuk</b></font>
+    </string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+</resources>
