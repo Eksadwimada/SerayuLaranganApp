@@ -1,6 +1,7 @@
 //ProfileFragment.kt
 package com.example.serayularanganapp.fragment
 
+import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -89,6 +90,25 @@ class ProfileFragment : Fragment() {
     // Fungsi untuk menghapus akun
     private fun deleteAccount(uid: String?) {
         // Hapus akun dari Firebase Authentication
+        val alertDialogBuilder = AlertDialog.Builder(requireContext())
+        alertDialogBuilder.setTitle("Konfirmasi Hapus Akun")
+        alertDialogBuilder.setMessage("Apakah Anda yakin ingin menghapus akun?")
+        alertDialogBuilder.setPositiveButton("Ya") { dialogInterface, _ ->
+            // User clicked "Ya", proceed with account deletion
+            deleteAccountConfirmed(uid)
+            dialogInterface.dismiss()
+        }
+        alertDialogBuilder.setNegativeButton("Batal") { dialogInterface, _ ->
+            // User clicked "Batal", do nothing
+            dialogInterface.dismiss()
+        }
+
+        val alertDialog: AlertDialog = alertDialogBuilder.create()
+        alertDialog.show()
+    }
+
+    private fun deleteAccountConfirmed(uid: String?) {
+        // Continue with the account deletion process
         auth.currentUser?.delete()
             ?.addOnCompleteListener { task ->
                 if (task.isSuccessful) {

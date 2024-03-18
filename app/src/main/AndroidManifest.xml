@@ -12,6 +12,15 @@
     <uses-permission
         android:name="android.permission.CAMERA"/>
 
+    <uses-permission
+        android:name="android.permission.INTERNET" />
+
+    <uses-permission
+        android:name="android.permission.ACCESS_FINE_LOCATION" />
+
+    <uses-permission
+        android:name="android.permission.ACCESS_COARSE_LOCATION" />
+
     <uses-feature
         android:name="android.hardware.camera"
         android:required="false"/>
@@ -20,28 +29,45 @@
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
-        android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
+        android:icon="@drawable/logo"
         android:supportsRtl="true"
         android:theme="@style/Theme.SerayuLaranganApp"
         android:screenOrientation="portrait"
         tools:targetApi="31">
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
+
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyDfGSd4ZkRmpIRh2kxiJmA-VkDo7BW8k9c" />
+
         <activity
             android:name=".activity.DetailTourActivity"
             android:theme="@style/AppTheme.NoActionBar"
+            android:screenOrientation="portrait"
             android:exported="false" />
+
         <activity
             android:name=".activity.ResetPasswordActivity"
+            android:screenOrientation="portrait"
             android:exported="false" />
+
         <activity
             android:name=".activity.LoginActivity"
+            android:screenOrientation="portrait"
             android:exported="false" />
+
         <activity
             android:name=".activity.RegisterActivity"
+            android:screenOrientation="portrait"
             android:exported="false" />
+
         <activity
             android:name=".activity.SplashScreenActivity"
+            android:screenOrientation="portrait"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -49,8 +75,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <activity
             android:name=".activity.OnBoardingActivity"
+            android:screenOrientation="portrait"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -58,8 +86,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <activity
             android:name=".activity.MainActivity"
+            android:screenOrientation="portrait"
             android:exported="true"
             android:label="@string/app_name">
             <intent-filter>
@@ -69,5 +99,4 @@
             </intent-filter>
         </activity>
     </application>
-
 </manifest>

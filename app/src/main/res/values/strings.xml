@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">Serayu Larangan App</string>
     <string name="title_home">Beranda</string>
-    <string name="title_maps">Map</string>
+    <string name="title_chart">Map</string>
     <string name="title_scan">Scan</string>
     <string name="title_profile">Profil</string>
     <string name="tour_title">Tour Title</string>

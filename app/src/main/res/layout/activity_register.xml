@@ -12,8 +12,8 @@
         style="@style/Title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
-        android:textSize="28dp"
+        android:layout_marginTop="26dp"
+        android:textSize="24dp"
         android:text="Daftar Akun"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -25,7 +25,8 @@
         android:layout_height="wrap_content"
         android:text="@string/regis_sub_title"
         android:layout_marginTop="4dp"
-        style="@style/SubTitle"
+        android:fontFamily="@font/poppinsregular"
+        android:textColor="@color/black"
         app:layout_constraintTop_toBottomOf="@+id/tv_title_login" />
 
     <com.google.android.material.textfield.TextInputLayout
@@ -129,7 +130,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Daftar"
-        android:textSize="16dp"
         android:textAllCaps="false"
         android:layout_marginBottom="15dp"
         app:layout_constraintBottom_toTopOf="@+id/tv_havent_account_reg"
@@ -138,11 +138,11 @@
 
     <TextView
         android:id="@+id/tv_havent_account_reg"
-        style="@style/SubTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/regis_havent_account"
-        android:textSize="14dp"
+        android:fontFamily="@font/poppinsregular"
+        android:textColor="@color/black"
         android:textAlignment="center"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

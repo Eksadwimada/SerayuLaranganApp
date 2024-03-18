@@ -19,24 +19,50 @@
             android:layout_centerInParent="true"
             android:textColor="@color/white"
             android:fontFamily="@font/poppinssemibold"
-            android:textSize="18dp"
+            android:textSize="16dp"
             android:layout_marginTop="30dp" />
 
     </RelativeLayout>
 
-    <com.budiyev.android.codescanner.CodeScannerView
-        android:id="@+id/scanner"
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="550dp"
-        app:autoFocusButtonVisible="true"/>
+        android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/tvOutput"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:text="output"
-        android:textAlignment="center"
-        style="@style/value" />
+        <com.budiyev.android.codescanner.CodeScannerView
+            android:id="@+id/scanner"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:autoFocusButtonVisible="true"/>
+
+        <LinearLayout
+            android:id="@+id/note"
+            android:background="@drawable/bg_info"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingStart="10dp"
+            android:paddingEnd="10dp"
+            android:paddingTop="4dp"
+            android:paddingBottom="4dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginBottom="20dp"
+            android:layout_gravity="bottom|start">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/info_colored"
+                android:layout_marginEnd="8dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/poppinsregular"
+                android:layout_gravity="center"
+                android:textColor="@color/white"
+                android:text="Arahkan kamera sesuai barcode"/>
+
+        </LinearLayout>
+
+    </FrameLayout>
 
 </LinearLayout>

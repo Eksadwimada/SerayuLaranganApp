@@ -12,8 +12,8 @@
         style="@style/Title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
-        android:textSize="28dp"
+        android:layout_marginTop="26dp"
+        android:textSize="24dp"
         android:text="Masuk Akun"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -24,8 +24,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/login_sub_title"
+        android:fontFamily="@font/poppinsregular"
+        android:textColor="@color/black"
         android:layout_marginTop="4dp"
-        style="@style/SubTitle"
         app:layout_constraintTop_toBottomOf="@+id/tv_title_login" />
 
     <com.google.android.material.textfield.TextInputLayout
@@ -79,14 +80,13 @@
 
     <TextView
         android:id="@+id/tv_forgot_pass"
-        style="@style/SubTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:text="Lupa Password ?"
+        android:fontFamily="@font/poppinsmedium"
         android:textAlignment="textEnd"
         android:textColor="@color/green"
-        android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/passLayout" />
@@ -97,7 +97,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Masuk"
-        android:textSize="16dp"
         android:textAllCaps="false"
         android:layout_marginBottom="15dp"
         app:layout_constraintBottom_toTopOf="@+id/tv_havent_account_log"
@@ -106,11 +105,11 @@
 
     <TextView
         android:id="@+id/tv_havent_account_log"
-        style="@style/SubTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/login_havent_account"
-        android:textSize="14dp"
+        android:fontFamily="@font/poppinsregular"
+        android:textColor="@color/black"
         android:textAlignment="center"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

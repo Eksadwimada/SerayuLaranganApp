@@ -25,8 +25,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textColor="@android:color/white"
-                android:fontFamily="@font/poppinsmedium"
-                android:textSize="17dp" />
+                android:fontFamily="@font/poppinsmedium" />
 
         </androidx.appcompat.widget.Toolbar>
 
@@ -96,15 +95,22 @@
                     android:textSize="12sp"
                     android:fontFamily="@font/poppinsregular"/>
 
+                <View
+                    android:id="@+id/viewOne"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/grey_light"
+                    android:layout_marginTop="20dp"
+                    android:layout_below="@+id/lockTour"/>
+
                 <TextView
                     android:id="@+id/ttDeskripsi"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_below="@id/lockTour"
-                    android:layout_marginTop="20dp"
                     android:text="Deskripsi Wisata"
-                    style="@style/SubTitleTour"
-                    android:textStyle="bold"/>
+                    android:layout_below="@id/viewOne"
+                    android:layout_marginTop="20dp"
+                    style="@style/SubTitleTour"/>
 
                 <TextView
                     android:id="@+id/tvDeskripsi"
@@ -116,15 +122,22 @@
                     android:layout_marginEnd="0dp"
                     style="@style/tvDesc" />
 
+                <View
+                    android:id="@+id/viewTwo"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/grey_light"
+                    android:layout_marginTop="20dp"
+                    android:layout_below="@+id/tvDeskripsi"/>
+
                 <TextView
                     android:id="@+id/ttInfoWisata"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_below="@id/tvDeskripsi"
+                    android:layout_below="@id/viewTwo"
                     android:text="Info Wisata"
                     android:layout_marginTop="20dp"
-                    style="@style/SubTitleTour"
-                    android:textStyle="bold" />
+                    style="@style/SubTitleTour" />
 
                 <TextView
                     android:id="@+id/tvInfoWisata"
@@ -133,6 +146,106 @@
                     android:layout_below="@id/ttInfoWisata"
                     android:layout_marginTop="10dp"
                     style="@style/tvDesc" />
+
+                <View
+                    android:id="@+id/viewTree"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/grey_light"
+                    android:layout_marginTop="20dp"
+                    android:layout_below="@+id/tvInfoWisata"/>
+
+                <TextView
+                    android:id="@+id/ttJumlahPengunjung"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/viewTree"
+                    android:text="Jumlah Pengunjung Hari Ini :"
+                    android:layout_marginTop="20dp"
+                    android:fontFamily="@font/poppinsmedium"
+                    android:textColor="@color/black"/>
+
+                <TextView
+                    android:id="@+id/tvJumlahPengunjung"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/viewTree"
+                    android:layout_toRightOf="@id/ttJumlahPengunjung"
+                    android:layout_marginTop="20dp"
+                    android:fontFamily="@font/poppinsregular"
+                    android:layout_marginStart="6dp" />
+
+                <View
+                    android:id="@+id/viewFour"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/grey_light"
+                    android:layout_marginTop="20dp"
+                    android:layout_below="@+id/ttJumlahPengunjung"/>
+
+                <TextView
+                    android:id="@+id/ttPengunjungWisata"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/viewFour"
+                    android:text="Pengunjung Wisata :"
+                    android:layout_marginTop="20dp"
+                    android:fontFamily="@font/poppinsmedium"
+                    android:textColor="@color/black"/>
+
+                <TextView
+                    android:id="@+id/tvPengunjungWisata"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/viewFour"
+                    android:layout_marginStart="8dp"
+                    android:layout_toRightOf="@id/ttPengunjungWisata"
+                    android:layout_marginTop="20dp"
+                    android:fontFamily="@font/poppinsregular" />
+
+                <View
+                    android:id="@+id/viewFive"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/grey_light"
+                    android:layout_marginTop="20dp"
+                    android:layout_below="@+id/tvPengunjungWisata"/>
+
+                <TextView
+                    android:id="@+id/ttMaps"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/viewFive"
+                    android:text="Map"
+                    android:layout_marginTop="20dp"
+                    style="@style/SubTitleTour" />
+
+                <com.google.android.gms.maps.MapView
+                    android:id="@+id/mapView"
+                    android:layout_width="match_parent"
+                    android:layout_height="200dp"
+                    android:layout_below="@id/ttMaps"
+                    android:layout_marginTop="10dp"
+                    app:liteMode="false"
+                    app:mapType="normal"
+                    app:uiCompass="true"
+                    app:uiRotateGestures="true"
+                    app:uiScrollGestures="false"
+                    app:uiTiltGestures="true"
+                    app:uiZoomControls="true"
+                    app:uiZoomGestures="true"
+                    class="com.google.android.gms.maps.MapView" />
+
+                <TextView
+                    android:layout_below="@id/mapView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="30dp"
+                    android:layout_marginTop="4dp"
+                    android:text="* Tekan maps untuk melihat detail wisata dari google."
+                    android:fontFamily="@font/poppinsregular"
+                    android:textSize="12dp"
+                    android:textColor="@color/grey"/>
 
             </RelativeLayout>
 

@@ -12,10 +12,10 @@
         tools:layout="@layout/fragment_home" />
 
     <fragment
-        android:id="@+id/navigation_maps"
-        android:name="com.example.serayularanganapp.fragment.MapsFragment"
-        android:label="@string/title_maps"
-        tools:layout="@layout/fragment_maps" />
+        android:id="@+id/navigation_chart"
+        android:name="com.example.serayularanganapp.fragment.ChartFragment"
+        android:label="@string/title_chart"
+        tools:layout="@layout/fragment_chart" />
 
     <fragment
         android:id="@+id/navigation_scan"

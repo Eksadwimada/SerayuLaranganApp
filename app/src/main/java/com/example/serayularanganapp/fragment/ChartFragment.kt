@@ -5,16 +5,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import com.example.serayularanganapp.databinding.FragmentMapsBinding
+import com.example.serayularanganapp.databinding.FragmentChartBinding
 
-class MapsFragment : Fragment() {
+class ChartFragment : Fragment() {
 
-    private var _binding: FragmentMapsBinding? = null
+    private var _binding: FragmentChartBinding? = null
 
     private val binding get() = _binding!!
 
     override fun onCreateView (inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        _binding = FragmentMapsBinding.inflate(inflater, container, false)
+        _binding = FragmentChartBinding.inflate(inflater, container, false)
         return binding.root
     }
 
