@@ -17,10 +17,12 @@ import com.budiyev.android.codescanner.ErrorCallback
 import com.budiyev.android.codescanner.ScanMode
 import com.example.serayularanganapp.databinding.FragmentScanBinding
 import com.example.serayularanganapp.model.TourData
+import com.example.serayularanganapp.model.VisitorData
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.MutableData
+import com.google.firebase.database.Transaction
 import com.google.firebase.database.ValueEventListener
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -29,13 +31,12 @@ import java.util.Locale
 class ScanFragment : Fragment() {
 
     private var _binding: FragmentScanBinding? = null
-
     private val binding get() = _binding!!
 
     private lateinit var codeScanner: CodeScanner
     private lateinit var today: String
 
-    override fun onCreateView (inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         _binding = FragmentScanBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -48,8 +49,9 @@ class ScanFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        //ambil data hari ini
-        today = SimpleDateFormat("yyyyMMdd", Locale.getDefault()).format(Date())
+        // Ambil data hari ini
+        val currentDateString = SimpleDateFormat("yyyyMMdd", Locale.getDefault()).format(Date())
+        today = currentDateString
 
         codeScanner()
         setPermission()
@@ -119,28 +121,39 @@ class ScanFragment : Fragment() {
     }
 
     private fun updateVisitorCounts(tourData: TourData) {
-        // Assuming you have a Firebase reference
-        val databaseReference: DatabaseReference = FirebaseDatabase.getInstance().getReference("Wisata")
+        val databaseReference = FirebaseDatabase.getInstance().getReference("Wisata")
 
-        // Update jumlah pengunjung hari ini
-        val updatedTodayVisitors = (tourData.dailyVisitorCounts[today] ?: 0) + 1
+        val today = SimpleDateFormat("yyyyMMdd", Locale.getDefault()).format(Date())
 
-        // Update total jumlah pengunjung wisata
-        val updatedTotalVisitors = tourData.totalVisitor + 1
+        val tourId = tourData.id ?: return
 
-        val updateMap = mapOf(
-            "dailyVisitorCounts/$today" to updatedTodayVisitors,
-            "totalVisitors" to updatedTotalVisitors
-        )
+        // Membuat referensi ke node visitorData pada tourData yang sesuai
+        val visitorDataRef = databaseReference.child(tourId).child("visitorData").child(today)
 
-        // Update Firebase dengan jumlah pengunjung
-        databaseReference.child(tourData.name!!).updateChildren(updateMap)
-            .addOnSuccessListener {
-                // Successfully updated visitor counts in Firebase
+        visitorDataRef.runTransaction(object : Transaction.Handler {
+            override fun doTransaction(mutableData: MutableData): Transaction.Result {
+                val currentVisitorData = mutableData.getValue(VisitorData::class.java)
+
+                // Jika data pengunjung belum ada, inisialisasi dengan nilai awal
+                if (currentVisitorData == null) {
+                    mutableData.value = VisitorData(today, 1, 1)
+                } else {
+                    // Jika data pengunjung sudah ada, tambahkan jumlah pengunjung
+                    currentVisitorData.visitorCount++
+                    currentVisitorData.totalVisitor++
+                    mutableData.value = currentVisitorData
+                }
+
+                return Transaction.success(mutableData)
             }
-            .addOnFailureListener {
-                // Handle failure
+
+            override fun onComplete(databaseError: DatabaseError?, committed: Boolean, dataSnapshot: DataSnapshot?) {
+                if (databaseError != null) {
+                    // Tangani kesalahan
+                    Toast.makeText(requireContext(), "Database error: ${databaseError.message}", Toast.LENGTH_SHORT).show()
+                }
             }
+        })
     }
 
     override fun onResume() {

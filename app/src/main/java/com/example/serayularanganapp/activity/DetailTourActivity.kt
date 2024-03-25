@@ -3,11 +3,11 @@ package com.example.serayularanganapp.activity
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
 import com.example.serayularanganapp.databinding.ActivityDetailTourBinding
 import com.example.serayularanganapp.model.TourData
+import com.example.serayularanganapp.model.VisitorData
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.MapView
 import com.google.android.gms.maps.model.LatLng
@@ -15,17 +15,12 @@ import com.google.android.gms.maps.model.MarkerOptions
 import com.google.firebase.FirebaseApp
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
 
-class DetailTourActivity : AppCompatActivity(){
+class DetailTourActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityDetailTourBinding
-    private lateinit var today: String
     private lateinit var mapView: MapView
     private lateinit var tourData: TourData
 
@@ -39,9 +34,6 @@ class DetailTourActivity : AppCompatActivity(){
         binding = ActivityDetailTourBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        //mengambil data hari ini
-        today = SimpleDateFormat("yyyyMMdd", Locale.getDefault()).format(Date())
-
         // Mendapatkan data tur dari intent
         tourData = intent.getSerializableExtra("Wisata") as TourData
 
@@ -49,8 +41,7 @@ class DetailTourActivity : AppCompatActivity(){
         binding.tvNamaWisata.text = tourData.name
         binding.tvDeskripsi.text = tourData.desc
         binding.tvInfoWisata.text = tourData.info
-        binding.tvJumlahPengunjung.text = "${tourData.dailyVisitorCounts[today] ?: 0} Pengunjung"
-        binding.tvPengunjungWisata.text = "${tourData.totalVisitor} Total Pengunjung"
+
 
         setSupportActionBar(binding.toolbar)
         supportActionBar?.title = null
@@ -85,48 +76,34 @@ class DetailTourActivity : AppCompatActivity(){
             }
         }
 
+        // Memanggil fungsi untuk mengupdate jumlah pengunjung
         updateVisitorCounts(tourData)
     }
 
     private fun updateVisitorCounts(tourData: TourData) {
-        val databaseReference: DatabaseReference = FirebaseDatabase.getInstance().getReference("Wisata")
+        // Mengambil referensi database Firebase
+        val databaseReference =
+            FirebaseDatabase.getInstance().getReference("Wisata").child(tourData.id ?: "")
 
-        val updatedTodayVisitors = (tourData.dailyVisitorCounts[today] ?: 0) + 1
-
-        val updatedTotalVisitors = tourData.totalVisitor + 1
-
-        val updateMap = mapOf("dailyVisitorCounts/$today" to updatedTodayVisitors, "totalVisitors" to updatedTotalVisitors)
-
-        //update firebase dengan jumlah pengunjung baru
-        databaseReference.child(tourData.name!!).updateChildren(updateMap)
-            .addOnSuccessListener {
-                fetchAndSetVisitorCounts(tourData)
-            }
-            .addOnFailureListener { e ->
-                // handle the error
-                Toast.makeText(this, "Gagal memperbarui: ${e.message}", Toast.LENGTH_SHORT).show()
-            }
-    }
-
-    private fun fetchAndSetVisitorCounts(tourData: TourData) {
-        val databaseReference = FirebaseDatabase.getInstance().getReference("Wisata")
-        databaseReference.child(tourData.name!!).addListenerForSingleValueEvent(object : ValueEventListener {
+        // Mendapatkan data jumlah pengunjung dari Firebase
+        databaseReference.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 if (snapshot.exists()) {
-                    val updatedTourData = snapshot.getValue(TourData::class.java)
-                    if (updatedTourData != null) {
-                        //Atur update jumlah pengunjung ke text
-                        binding.tvJumlahPengunjung.text = "${updatedTourData.dailyVisitorCounts[today] ?: 0} Pengunjung"
-                        binding.tvPengunjungWisata.text = "${updatedTourData.totalVisitor} Total Pengunjung"
-                    } else {
-                        Toast.makeText(this@DetailTourActivity, "Data wisata tidak ditemukan!", Toast.LENGTH_SHORT).show()
+                    // Mengambil data jumlah pengunjung dari Firebase
+                    val visitorData = snapshot.getValue(VisitorData::class.java)
+
+                    // Memperbarui data jumlah pengunjung di UI
+                    visitorData?.let {
+                        binding.tvJumlahPengunjung.text = it.visitorCount.toString()
+                        binding.tvPengunjungWisata.text = it.totalVisitor.toString()
                     }
                 }
             }
 
             override fun onCancelled(error: DatabaseError) {
-                // Handle the error
-                Toast.makeText(this@DetailTourActivity, "Database error: ${error.message}", Toast.LENGTH_SHORT).show()
+                // Tangani kesalahan
+                // Misalnya, tampilkan pesan kesalahan
+                // Toast.makeText(this@DetailTourActivity, "Database error: ${error.message}", Toast.LENGTH_SHORT).show()
             }
         })
     }
@@ -148,6 +125,6 @@ class DetailTourActivity : AppCompatActivity(){
 
     override fun onLowMemory() {
         super.onLowMemory()
-        mapView.onLowMemory()
+
     }
 }
