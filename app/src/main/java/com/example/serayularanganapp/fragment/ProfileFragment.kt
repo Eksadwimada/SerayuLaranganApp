@@ -1,4 +1,3 @@
-//ProfileFragment.kt
 package com.example.serayularanganapp.fragment
 
 import android.app.AlertDialog
@@ -7,10 +6,13 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import com.example.serayularanganapp.R
 import com.example.serayularanganapp.activity.LoginActivity
 import com.example.serayularanganapp.activity.RegisterActivity
+import com.example.serayularanganapp.activity.TouristVisitsActivity
 import com.example.serayularanganapp.databinding.FragmentProfileBinding
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
@@ -47,6 +49,10 @@ class ProfileFragment : Fragment() {
 
         //menampilkan nama dan email dari database
         getUserData(currentUserUid)
+
+        binding.btnKunjungan.setOnClickListener {
+            startActivity(Intent(context, TouristVisitsActivity::class.java))
+        }
 
         binding.btnLogout.setOnClickListener {
             signOut()
@@ -91,7 +97,7 @@ class ProfileFragment : Fragment() {
     private fun deleteAccount(uid: String?) {
         // Hapus akun dari Firebase Authentication
         val alertDialogBuilder = AlertDialog.Builder(requireContext())
-        alertDialogBuilder.setTitle("Konfirmasi Hapus Akun")
+        alertDialogBuilder.setTitle("Konfirmasi!!!")
         alertDialogBuilder.setMessage("Apakah Anda yakin ingin menghapus akun?")
         alertDialogBuilder.setPositiveButton("Ya") { dialogInterface, _ ->
             // User clicked "Ya", proceed with account deletion
@@ -104,6 +110,20 @@ class ProfileFragment : Fragment() {
         }
 
         val alertDialog: AlertDialog = alertDialogBuilder.create()
+        alertDialog.setOnShowListener {
+            alertDialog.findViewById<TextView>(android.R.id.title)?.apply {
+                setTextAppearance(requireContext(), R.style.AlertDialogTitle)
+            }
+            alertDialog.findViewById<TextView>(android.R.id.message)?.apply {
+                setTextAppearance(requireContext(), R.style.AlertDialogMessage)
+            }
+            alertDialog.getButton(AlertDialog.BUTTON_POSITIVE)?.apply {
+                setTextAppearance(requireContext(), R.style.AlertDialogButton)
+            }
+            alertDialog.getButton(AlertDialog.BUTTON_NEGATIVE)?.apply {
+                setTextAppearance(requireContext(), R.style.AlertDialogButton)
+            }
+        }
         alertDialog.show()
     }
 

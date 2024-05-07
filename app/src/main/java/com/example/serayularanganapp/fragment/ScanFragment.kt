@@ -3,9 +3,11 @@ package com.example.serayularanganapp.fragment
 import android.app.AlertDialog
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -15,15 +17,14 @@ import com.budiyev.android.codescanner.CodeScanner
 import com.budiyev.android.codescanner.DecodeCallback
 import com.budiyev.android.codescanner.ErrorCallback
 import com.budiyev.android.codescanner.ScanMode
+import com.example.serayularanganapp.R
 import com.example.serayularanganapp.databinding.FragmentScanBinding
-import com.example.serayularanganapp.model.TourData
-import com.example.serayularanganapp.model.VisitorData
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.MutableData
 import com.google.firebase.database.Transaction
-import com.google.firebase.database.ValueEventListener
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -49,8 +50,7 @@ class ScanFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Ambil data hari ini
-        val currentDateString = SimpleDateFormat("yyyyMMdd", Locale.getDefault()).format(Date())
+        val currentDateString = SimpleDateFormat("dd MMMM yyyy", Locale.getDefault()).format(Date())
         today = currentDateString
 
         codeScanner()
@@ -77,6 +77,7 @@ class ScanFragment : Fragment() {
 
             errorCallback = ErrorCallback {
                 requireActivity().runOnUiThread {
+                    Log.e("CodeScanner", "Camera initialization error: ${it.message}")
                     Toast.makeText(requireContext(), "${it.message}", Toast.LENGTH_SHORT).show()
                 }
             }
@@ -89,71 +90,82 @@ class ScanFragment : Fragment() {
 
     private fun showScanResultPopup(scanResult: String) {
         val builder = AlertDialog.Builder(requireContext())
-        builder.setTitle("Scan Result")
-        builder.setMessage("Scan Result: $scanResult")
+        builder.setTitle("Scan Berhasil!!!")
+        builder.setMessage("Di wisata : $scanResult")
         builder.setPositiveButton("OK") { dialog, _ ->
             dialog.dismiss()
 
-            // Ambil instance TourData yang sesuai dengan kode QR yang dipindai
-            // Ambil data dari Firebase
-            val databaseReference = FirebaseDatabase.getInstance().getReference("Wisata")
-            databaseReference.child(scanResult).addListenerForSingleValueEvent(object : ValueEventListener {
-                override fun onDataChange(snapshot: DataSnapshot) {
-                    if (snapshot.exists()) {
-                        val tourData = snapshot.getValue(TourData::class.java)
-                        if (tourData != null) {
-                            // Update the visitor count
-                            updateVisitorCounts(tourData)
-                        }
-                    } else {
-                        // Handle if TourData for the scanned QR code doesn't exist
-                    }
-                }
-
-                override fun onCancelled(error: DatabaseError) {
-                    // Handle the error
-                }
-            })
+            saveVisitorData(scanResult)
         }
 
         val alertDialog = builder.create()
+        alertDialog.setOnShowListener {
+            alertDialog.findViewById<TextView>(android.R.id.title)?.apply {
+                setTextAppearance(requireContext(), R.style.AlertDialogTitle)
+            }
+            alertDialog.findViewById<TextView>(android.R.id.message)?.apply {
+                setTextAppearance(requireContext(), R.style.AlertDialogMessage)
+            }
+            alertDialog.getButton(AlertDialog.BUTTON_POSITIVE)?.apply {
+                setTextAppearance(requireContext(), R.style.AlertDialogButton)
+            }
+        }
         alertDialog.show()
     }
 
-    private fun updateVisitorCounts(tourData: TourData) {
-        val databaseReference = FirebaseDatabase.getInstance().getReference("Wisata")
+    private fun saveVisitorData(scanResult: String) {
 
-        val today = SimpleDateFormat("yyyyMMdd", Locale.getDefault()).format(Date())
+        val userId = FirebaseAuth.getInstance().currentUser?.uid
 
-        val tourId = tourData.id ?: return
+        if (userId != null) {
+            val databaseReference = FirebaseDatabase.getInstance().reference
 
-        // Membuat referensi ke node visitorData pada tourData yang sesuai
-        val visitorDataRef = databaseReference.child(tourId).child("visitorData").child(today)
-
-        visitorDataRef.runTransaction(object : Transaction.Handler {
-            override fun doTransaction(mutableData: MutableData): Transaction.Result {
-                val currentVisitorData = mutableData.getValue(VisitorData::class.java)
-
-                // Jika data pengunjung belum ada, inisialisasi dengan nilai awal
-                if (currentVisitorData == null) {
-                    mutableData.value = VisitorData(today, 1, 1)
-                } else {
-                    // Jika data pengunjung sudah ada, tambahkan jumlah pengunjung
-                    currentVisitorData.visitorCount++
-                    currentVisitorData.totalVisitor++
-                    mutableData.value = currentVisitorData
+            // Update jumlah pengunjung hari ini
+            val jumlahHariIniRef = databaseReference.child("PengunjungHariIni").child(scanResult).child(today).child("HariIni")
+            jumlahHariIniRef.runTransaction(object : Transaction.Handler {
+                override fun doTransaction(mutableData: MutableData): Transaction.Result {
+                    val jumlahHariIni = mutableData.getValue(Int::class.java) ?: 0
+                    mutableData.value = jumlahHariIni + 1
+                    return Transaction.success(mutableData)
                 }
 
-                return Transaction.success(mutableData)
-            }
-
-            override fun onComplete(databaseError: DatabaseError?, committed: Boolean, dataSnapshot: DataSnapshot?) {
-                if (databaseError != null) {
-                    // Tangani kesalahan
-                    Toast.makeText(requireContext(), "Database error: ${databaseError.message}", Toast.LENGTH_SHORT).show()
+                override fun onComplete(databaseError: DatabaseError?, committed: Boolean, dataSnapshot: DataSnapshot?) {
+                    if (databaseError != null) {
+                        Log.e("FirebaseError", "Transaction error: ${databaseError.message}")
+                        Toast.makeText(requireContext(), "Transaction error: ${databaseError.message}", Toast.LENGTH_SHORT).show()
+                    } else {
+                        val userId = FirebaseAuth.getInstance().currentUser?.uid
+                        if (userId != null) {
+                            val wisataNameRef = databaseReference.child("TotalPengunjungPerUser").child(scanResult).child(userId).child("name")
+                            wisataNameRef.setValue(scanResult)
+                        }
+                    }
                 }
-            }
-        })
+            })
+
+            // Update total pengunjung per user
+            val totalUserRef = databaseReference.child("TotalPengunjungPerUser").child(scanResult).child(userId).child("total")
+            totalUserRef.runTransaction(object : Transaction.Handler {
+                override fun doTransaction(mutableData: MutableData): Transaction.Result {
+                    val totalPengunjung = mutableData.getValue(Int::class.java) ?: 0
+                    mutableData.value = totalPengunjung + 1
+                    return Transaction.success(mutableData)
+                }
+
+                override fun onComplete(databaseError: DatabaseError?, committed: Boolean, dataSnapshot: DataSnapshot?) {
+                    if (databaseError != null) {
+                        Log.e("FirebaseError", "Transaction error: ${databaseError.message}")
+                        Toast.makeText(requireContext(), "Transaction error: ${databaseError.message}", Toast.LENGTH_SHORT).show()
+                    } else {
+                        Toast.makeText(requireContext(), "Menambahkan jumlah pengunjung!", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            })
+
+        } else {
+            Log.e("ScanFragment", "User belum Login!" )
+            Toast.makeText(requireContext(), "User belum login!", Toast.LENGTH_SHORT).show()
+        }
     }
 
     override fun onResume() {
@@ -186,7 +198,7 @@ class ScanFragment : Fragment() {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         when(requestCode){
             101 -> {
-                if (grantResults. isEmpty() || grantResults[0] != PackageManager.PERMISSION_GRANTED)
+                if (grantResults.isEmpty() || grantResults[0] != PackageManager.PERMISSION_GRANTED)
                     Toast.makeText(requireContext(), "Permission Dibutuhkan", Toast.LENGTH_SHORT).show()
             }
         }

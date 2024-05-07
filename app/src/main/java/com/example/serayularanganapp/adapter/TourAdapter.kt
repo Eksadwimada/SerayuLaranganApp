@@ -1,4 +1,3 @@
-// TourAdapter.kt
 package com.example.serayularanganapp.adapter
 
 import android.content.Context
@@ -31,8 +30,6 @@ class TourAdapter(
     override fun onBindViewHolder(holder: TourViewHolder, position: Int) {
         Glide.with(context).load(dataList[position].img).into(holder.recImage)
         holder.recName.text = dataList[position].name
-        //holder.recDesc.text = dataList[position].desc
-        //holder.recInfo.text = dataList[position].info
 
         //click
         holder.itemView.setOnClickListener {
@@ -47,7 +44,5 @@ class TourAdapter(
     class TourViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         var recImage: ImageView = itemView.findViewById(R.id.imageWisata)
         var recName: TextView = itemView.findViewById(R.id.tvNamaWisata)
-        //var recDesc: TextView = itemView.findViewById(R.id.tvDeskripsi)
-        //var recInfo: TextView = itemView.findViewById(R.id.tvInfoWisata)
     }
 }

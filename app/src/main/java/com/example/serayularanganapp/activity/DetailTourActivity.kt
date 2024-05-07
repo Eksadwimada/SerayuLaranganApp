@@ -3,26 +3,32 @@ package com.example.serayularanganapp.activity
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
 import com.example.serayularanganapp.databinding.ActivityDetailTourBinding
 import com.example.serayularanganapp.model.TourData
-import com.example.serayularanganapp.model.VisitorData
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.MapView
+import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.firebase.FirebaseApp
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 class DetailTourActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityDetailTourBinding
     private lateinit var mapView: MapView
     private lateinit var tourData: TourData
+    private lateinit var userId: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,7 +48,6 @@ class DetailTourActivity : AppCompatActivity() {
         binding.tvDeskripsi.text = tourData.desc
         binding.tvInfoWisata.text = tourData.info
 
-
         setSupportActionBar(binding.toolbar)
         supportActionBar?.title = null
         binding.tvToolbarWisata.text = tourData.name
@@ -58,52 +63,54 @@ class DetailTourActivity : AppCompatActivity() {
             .load(tourData.img)
             .into(binding.imageWisata)
 
-        //maps
         mapView = binding.mapView
         mapView.onCreate(savedInstanceState)
         mapView.getMapAsync { googleMap ->
-            // Set up the map with the latitude and longitude from TourData
             val tourLocation = LatLng(tourData.latitude ?: 0.0, tourData.longitude ?: 0.0)
-            googleMap.addMarker(MarkerOptions().position(tourLocation).title(tourData.name))
+            val markerOptions = MarkerOptions().position(tourLocation).title(tourData.name)
+            markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)) // Set warna marker merah
+            googleMap.addMarker(markerOptions)
             googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(tourLocation, 15f))
 
             googleMap.setOnMapClickListener { latLng ->
                 val intent = Intent(
                     Intent.ACTION_VIEW,
-                    Uri.parse("google.navigation:q=${latLng.latitude},${latLng.longitude}")
+                    Uri.parse("google.navigation:q=${tourLocation.latitude},${tourLocation.longitude}")
                 )
                 startActivity(intent)
+                Log.d("DetailTourActivity", "Opening Google Maps Navigation")
             }
         }
 
-        // Memanggil fungsi untuk mengupdate jumlah pengunjung
+        //mengambil userId saat ini
+        userId = FirebaseAuth.getInstance().currentUser?.uid ?: ""
+
+        // Update visitor counts
         updateVisitorCounts(tourData)
     }
 
     private fun updateVisitorCounts(tourData: TourData) {
-        // Mengambil referensi database Firebase
-        val databaseReference =
-            FirebaseDatabase.getInstance().getReference("Wisata").child(tourData.id ?: "")
+        val wisataName = tourData.name ?: ""
 
-        // Mendapatkan data jumlah pengunjung dari Firebase
-        databaseReference.addListenerForSingleValueEvent(object : ValueEventListener {
+        val currentDateString = SimpleDateFormat("dd MMMM yyyy", Locale.getDefault()).format(Date())
+
+        // ref untuk jumlah pengunjung hari ini
+        val jumlahHariIniRef = FirebaseDatabase.getInstance().getReference("PengunjungHariIni").child(wisataName).child(currentDateString)
+
+
+        // get jumlah pengunjung hari ini
+        jumlahHariIniRef.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 if (snapshot.exists()) {
-                    // Mengambil data jumlah pengunjung dari Firebase
-                    val visitorData = snapshot.getValue(VisitorData::class.java)
-
-                    // Memperbarui data jumlah pengunjung di UI
-                    visitorData?.let {
-                        binding.tvJumlahPengunjung.text = it.visitorCount.toString()
-                        binding.tvPengunjungWisata.text = it.totalVisitor.toString()
-                    }
+                    val hariIni = snapshot.child("HariIni").getValue(Int::class.java) ?: 0
+                    binding.tvJumlahPengunjung.text = "${hariIni.toString()} Pengunjung"
+                } else {
+                    binding.tvJumlahPengunjung.text = "0 Pengunjung"
                 }
             }
 
             override fun onCancelled(error: DatabaseError) {
-                // Tangani kesalahan
-                // Misalnya, tampilkan pesan kesalahan
-                // Toast.makeText(this@DetailTourActivity, "Database error: ${error.message}", Toast.LENGTH_SHORT).show()
+                // Handle onCancelled event if needed
             }
         })
     }
@@ -125,6 +132,6 @@ class DetailTourActivity : AppCompatActivity() {
 
     override fun onLowMemory() {
         super.onLowMemory()
-
+        mapView.onLowMemory()
     }
 }

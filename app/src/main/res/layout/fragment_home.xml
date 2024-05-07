@@ -6,60 +6,109 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:background="@color/white_smoke">
 
-    <xyz.sahildave.arclayout.ArcLayout
-        android:layout_width="match_parent"
-        android:layout_height="240dp"
-        app:arc_cropCurve="cropConcave"
-        app:arc_height="0dp"
-        app:arc_position="bottom">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@color/green"
-            android:gravity="center"
-            android:orientation="vertical" />
-
-    </xyz.sahildave.arclayout.ArcLayout>
-
-    <include layout="@layout/toolbar_main" />
-
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="190dp"
         android:orientation="vertical">
 
-        <LinearLayout
-            android:id="@+id/cari"
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:layout_marginStart="20dp"
-            android:layout_marginEnd="20dp"
-            android:background="@drawable/bg_search"
-            android:orientation="horizontal">
+            android:layout_height="wrap_content"
+            android:padding="20dp"
+            android:background="@color/green">
 
-            <androidx.appcompat.widget.SearchView
-                android:id="@+id/searchView"
-                android:layout_width="match_parent"
+            <ImageView
+                android:id="@+id/imgLogo"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:src="@drawable/logo"
+                android:layout_alignParentTop="true"/>
+
+            <LinearLayout
+                android:id="@+id/lyWelcome"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:iconifiedByDefault="false"
-                app:queryBackground="@android:color/transparent"
-                app:queryHint="Cari Wisata..."
-                style="@style/SearchViewStyle">
+                android:orientation="horizontal">
 
-            </androidx.appcompat.widget.SearchView>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="hai, "
+                    android:fontFamily="@font/poppinsregular"
+                    android:textColor="@color/white"
+                    android:layout_marginTop="8dp"/>
 
-        </LinearLayout>
+                <TextView
+                    android:id="@+id/tvWelcome"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    style="@style/Title"
+                    android:text="Eksa"
+                    android:textSize="20dp"
+                    android:textColor="@color/white"
+                    android:layout_marginTop="8dp"/>
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerView"
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/ttSelamatDatang"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Selamat Datang"
+                android:layout_below="@+id/lyWelcome"
+                android:fontFamily="@font/poppinsregular"
+                android:textColor="@color/white"
+                android:layout_marginTop="4dp"/>
+
+            <TextView
+                android:id="@+id/ttWisataSerayu"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Wisata Serayu Larangan"
+                android:layout_below="@+id/ttSelamatDatang"
+                android:fontFamily="@font/poppinsregular"
+                android:textColor="@color/white"
+                android:layout_marginTop="4dp"/>
+
+            <LinearLayout
+                android:id="@+id/cari"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/bg_search"
+                android:layout_below="@id/ttWisataSerayu"
+                android:orientation="horizontal">
+
+                <androidx.appcompat.widget.SearchView
+                    android:id="@+id/searchView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:iconifiedByDefault="false"
+                    app:queryBackground="@android:color/transparent"
+                    app:queryHint="Cari Wisata..."
+                    style="@style/SearchViewStyle">
+
+                </androidx.appcompat.widget.SearchView>
+
+            </LinearLayout>
+
+        </RelativeLayout>
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_below="@+id/cari"
-            android:layout_marginTop="20dp"
-            tools:listitem="@layout/item_tour"/>
+            android:orientation="vertical">
 
-    </RelativeLayout>
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="8dp"
+                tools:listitem="@layout/item_tour"/>
+        </LinearLayout>
+
+    </LinearLayout>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

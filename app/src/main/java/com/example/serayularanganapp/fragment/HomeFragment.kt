@@ -15,6 +15,8 @@ import com.example.serayularanganapp.activity.DetailTourActivity
 import com.example.serayularanganapp.adapter.TourAdapter
 import com.example.serayularanganapp.databinding.FragmentHomeBinding
 import com.example.serayularanganapp.model.TourData
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
@@ -26,8 +28,12 @@ class HomeFragment : Fragment() {
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
 
+    private lateinit var auth: FirebaseAuth
     private lateinit var database: FirebaseDatabase
     private lateinit var tourDataRef: DatabaseReference
+
+    //Deklarasi variabel nama pengguna
+    private var username: String = ""
 
     // Daftar tour asli sebelum pencarian
     private var originalTourDataList: List<TourData> = mutableListOf()
@@ -40,12 +46,38 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        auth = FirebaseAuth.getInstance()
         database = FirebaseDatabase.getInstance()
         tourDataRef = database.getReference("Wisata")
 
+        //dapatkan instance pengguna yang saat ini login
+        val currentUser: FirebaseUser? = auth.currentUser
+
+        //cek apakah ada pengguna login
+        currentUser?.let { user ->
+            val currentUserUid = user.uid
+
+            val userRef = database.getReference("users").child(currentUserUid)
+
+            userRef.addValueEventListener(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    if (snapshot.exists()) {
+                        //ambil nilai username
+                        username = snapshot.child("username").getValue(String::class.java) ?: ""
+
+                        //tampilkan nama
+                        binding.tvWelcome.text = "$username"
+                    }
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    Log.e("FirebaseError", "Error: ${error.message}")
+                }
+            })
+        }
+
         val layoutManager = LinearLayoutManager(requireContext())
         binding.recyclerView.layoutManager = layoutManager
-
 
         val adapter = TourAdapter(requireContext(), emptyList()) { tourData ->
             val intent = Intent(requireContext(), DetailTourActivity::class.java)
