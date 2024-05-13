@@ -11,12 +11,15 @@ import com.example.serayularanganapp.databinding.ActivityLoginBinding
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
+import com.google.firebase.auth.FirebaseAuthInvalidUserException
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.jakewharton.rxbinding2.widget.RxTextView
 import io.reactivex.Observable
+
 
 @SuppressLint("CheckResult")
 class LoginActivity : AppCompatActivity() {
@@ -85,6 +88,9 @@ class LoginActivity : AppCompatActivity() {
         binding.tvForgotPass.setOnClickListener {
             startActivity(Intent(this, ResetPasswordActivity::class.java))
         }
+        binding.btnBack.setOnClickListener {
+            startActivity(Intent(this, OnBoardingActivity::class.java))
+        }
     }
 
     private fun showTextMinimalAlert(isNotValid: Boolean, text: String) {
@@ -129,7 +135,13 @@ class LoginActivity : AppCompatActivity() {
                 Toast.makeText(this, "Login berhasil", Toast.LENGTH_SHORT).show()
             }
         } else {
-            Toast.makeText(this, loginTask.exception?.message, Toast.LENGTH_SHORT).show()
+            // Dapatkan pesan kesalahan spesifik untuk menampilkan kesalahan yang tepat
+            val errorMessage = when (loginTask.exception) {
+                is FirebaseAuthInvalidUserException -> "Akun tidak ditemukan"
+                is FirebaseAuthInvalidCredentialsException -> "Username atau password tidak valid"
+                else -> "Gagal login: ${loginTask.exception?.message}"
+            }
+            Toast.makeText(this, errorMessage, Toast.LENGTH_SHORT).show()
         }
     }
 

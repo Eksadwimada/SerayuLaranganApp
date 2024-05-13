@@ -10,6 +10,7 @@ import androidx.core.content.ContextCompat
 import com.example.serayularanganapp.R
 import com.example.serayularanganapp.databinding.ActivityRegisterBinding
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseAuthUserCollisionException
 import com.google.firebase.database.FirebaseDatabase
 import com.jakewharton.rxbinding2.widget.RxTextView
 import io.reactivex.Observable
@@ -107,6 +108,9 @@ class RegisterActivity : AppCompatActivity() {
         binding.tvHaventAccountReg.setOnClickListener {
             startActivity(Intent(this, LoginActivity::class.java))
         }
+        binding.btnBack.setOnClickListener {
+            startActivity(Intent(this, OnBoardingActivity::class.java))
+        }
     }
 
     private fun showTextMinimalAlert(isNotValid: Boolean, text: String) {
@@ -151,8 +155,16 @@ class RegisterActivity : AppCompatActivity() {
                             }
                     }
                 } else {
-                    Toast.makeText(this, task.exception?.message, Toast.LENGTH_SHORT).show()
+                    // Tangani kesalahan saat pendaftaran
+                    if (task.exception is FirebaseAuthUserCollisionException) {
+                        // Jika alamat email telah terdaftar sebelumnya
+                        Toast.makeText(this, "Alamat email sudah terdaftar. Silakan gunakan alamat email lain.", Toast.LENGTH_SHORT).show()
+                    } else {
+                        // Kesalahan lainnya
+                        Toast.makeText(this, task.exception?.message, Toast.LENGTH_SHORT).show()
+                    }
                 }
             }
     }
+
 }

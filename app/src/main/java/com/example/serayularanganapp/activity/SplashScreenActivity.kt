@@ -14,58 +14,50 @@ import kotlinx.coroutines.launch
 
 class SplashScreenActivity : AppCompatActivity() {
 
+    private val SPLASH_SCREEN_DURATION = 3000L // Durasi splash screen dalam milidetik
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        // Menghilangkan batas atas layar
         window.setFlags(
             android.view.WindowManager.LayoutParams.FLAG_FULLSCREEN,
             android.view.WindowManager.LayoutParams.FLAG_FULLSCREEN
         )
-
         setContentView(R.layout.activity_splash_screen)
         supportActionBar?.hide()
 
-        checkInternetConnectionAndDelay()
+        checkInternetConnectionAndProceed()
     }
 
-    private fun checkInternetConnectionAndDelay() {
+    private fun checkInternetConnectionAndProceed() {
         val connectivityManager =
             getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         val networkInfo = connectivityManager.activeNetworkInfo
 
         if (networkInfo != null && networkInfo.isConnected) {
-            // Ada koneksi internet, lanjutkan dengan menampilkan splash screen
-            GlobalScope.launch(Dispatchers.Main) {
-                try {
-                    // Lakukan operasi unduhan
-                    delay(3000) //
-                    navigateToNextScreen()
-                } catch (e: Exception) {
-                    // Tangani kesalahan atau tampilkan pesan yang sesuai
-                    showErrorMessage()
-                }
-            }
+            // Jika ada koneksi internet, lanjutkan dengan menampilkan splash screen
+            showSplashScreenWithDelay(SPLASH_SCREEN_DURATION)
         } else {
+            // Jika tidak ada koneksi internet, tampilkan pesan dan tahan splash screen
             showNoInternetMessage()
+        }
+    }
+
+    private fun showSplashScreenWithDelay(delayMillis: Long) {
+        GlobalScope.launch(Dispatchers.Main) {
+            delay(delayMillis)
             navigateToNextScreen()
         }
     }
 
     private fun showNoInternetMessage() {
-        // Tampilkan pesan tidak ada koneksi internet menggunakan Toast
         Toast.makeText(this, "Tidak ada koneksi internet", Toast.LENGTH_SHORT).show()
-    }
-
-    private fun showErrorMessage() {
-        // Tampilkan pesan kesalahan menggunakan Toast
-        Toast.makeText(this, "Terjadi kesalahan", Toast.LENGTH_SHORT).show()
+        // Tahan splash screen, tidak memanggil navigateToNextScreen()
     }
 
     private fun navigateToNextScreen() {
-        // Membuat intent untuk beralih ke aktivitas berikutnya
         val intent = Intent(this, OnBoardingActivity::class.java)
         startActivity(intent)
         finish()
     }
 }
+

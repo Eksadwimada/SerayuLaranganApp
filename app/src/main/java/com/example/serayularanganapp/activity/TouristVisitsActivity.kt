@@ -1,6 +1,7 @@
 package com.example.serayularanganapp.activity
 
 import android.os.Bundle
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.serayularanganapp.adapter.VisitsAdapter
@@ -43,19 +44,32 @@ class TouristVisitsActivity : AppCompatActivity() {
         databaseReference.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 touristVisits.clear()
+                var userVisited = false
                 for (touristDataSnapshot in dataSnapshot.children) {
-                    val totalVisits = touristDataSnapshot.child(userId).child("total").getValue(Int::class.java) ?: 0
-                    // Pemanggilan nama wisata dari tabel TotalPengunjungPerUser
-                    val name = touristDataSnapshot.child(userId).child("name").getValue(String::class.java) ?: ""
+                    if (touristDataSnapshot.hasChild(userId)) {
+                        userVisited = true
+                        val totalVisits = touristDataSnapshot.child(userId).child("total").getValue(Int::class.java) ?: 0
 
-                    val tourData = TourData(name, "", "", "", null, null)
-                    tourData.name = name
-                    tourData.totalVisits = totalVisits
-                    touristVisits.add(tourData)
+                        val name = touristDataSnapshot.child(userId).child("name").getValue(String::class.java) ?: ""
+
+                        val tourData = TourData(name, "", "", "", null, null)
+                        tourData.name = name
+                        tourData.totalVisits = totalVisits
+                        touristVisits.add(tourData)
+                    }
                 }
-                visitsAdapter.notifyDataSetChanged()
+                // Periksa apakah pengguna telah mengunjungi wisata
+                if (!userVisited) {
+                    // Tampilkan pesan jika pengguna belum mengunjungi wisata
+                    binding.recyclerViewKunjungan.visibility = View.GONE
+                    binding.notFound.visibility = View.VISIBLE
+                } else {
+                    // Tampilkan daftar kunjungan jika pengguna telah mengunjungi wisata
+                    binding.recyclerViewKunjungan.visibility = View.VISIBLE
+                    binding.notFound.visibility = View.GONE
+                    visitsAdapter.notifyDataSetChanged()
+                }
             }
-
             override fun onCancelled(databaseError: DatabaseError) {
                 // Handle error
             }

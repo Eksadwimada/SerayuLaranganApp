@@ -56,6 +56,9 @@ class ResetPasswordActivity : AppCompatActivity() {
         binding.tvBackLogin.setOnClickListener {
             startActivity(Intent(this, LoginActivity::class.java))
         }
+        binding.btnBack.setOnClickListener {
+            startActivity(Intent(this, LoginActivity::class.java))
+        }
 
     }
 

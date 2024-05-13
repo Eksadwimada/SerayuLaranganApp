@@ -36,6 +36,8 @@ class ScanFragment : Fragment() {
 
     private lateinit var codeScanner: CodeScanner
     private lateinit var today: String
+    private val allowedPlaces = listOf("Curug Ciputut", "River Tubing", "Tuk Pejaten", "Tuk Dandang", "Telakpak Wali")
+
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         _binding = FragmentScanBinding.inflate(inflater, container, false)
@@ -91,11 +93,18 @@ class ScanFragment : Fragment() {
     private fun showScanResultPopup(scanResult: String) {
         val builder = AlertDialog.Builder(requireContext())
         builder.setTitle("Scan Berhasil!!!")
-        builder.setMessage("Di wisata : $scanResult")
-        builder.setPositiveButton("OK") { dialog, _ ->
-            dialog.dismiss()
 
-            saveVisitorData(scanResult)
+        if (allowedPlaces.contains(scanResult)) {
+            builder.setMessage("Di wisata : $scanResult")
+            builder.setPositiveButton("OK") { dialog, _ ->
+                dialog.dismiss()
+                saveVisitorData(scanResult)
+            }
+        } else {
+            builder.setMessage("Anda hanya bisa melakukan scan di salah satu dari tempat wisata yang diizinkan.")
+            builder.setPositiveButton("OK") { dialog, _ ->
+                dialog.dismiss()
+            }
         }
 
         val alertDialog = builder.create()
