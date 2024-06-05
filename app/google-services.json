@@ -1,6 +1,7 @@
 {
   "project_info": {
     "project_number": "127388364181",
+    "firebase_url": "https://serayu-larangan-app-default-rtdb.firebaseio.com",
     "project_id": "serayu-larangan-app",
     "storage_bucket": "serayu-larangan-app.appspot.com"
   },
@@ -10,6 +11,25 @@
         "mobilesdk_app_id": "1:127388364181:android:36740501a115f419c05a9c",
         "android_client_info": {
           "package_name": "com.example.serayularanganapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDgxon3elm44-_BzygVhSLz0a5BpGDpGog"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:127388364181:android:e22eb9f9019cffdbc05a9c",
+        "android_client_info": {
+          "package_name": "com.tanxe.serayularanganapp"
         }
       },
       "oauth_client": [],
